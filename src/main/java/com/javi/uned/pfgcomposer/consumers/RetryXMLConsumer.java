@@ -26,7 +26,7 @@ import java.nio.file.Files;
 @Service
 public class RetryXMLConsumer {
 
-    private final Logger logger = LoggerFactory.getLogger(RetryPDFConsumer.class);
+    private final Logger logger = LoggerFactory.getLogger(RetryXMLConsumer.class);
     private static final String TOPIC_COMPOSER_EXECUTION = "melodia.composer.retryxml";
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;

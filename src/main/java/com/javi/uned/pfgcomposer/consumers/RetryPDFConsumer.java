@@ -1,6 +1,5 @@
 package com.javi.uned.pfgcomposer.consumers;
 
-import com.javi.uned.pfg.model.ScoreComposite;
 import com.javi.uned.pfgcomposer.exceptions.BackendException;
 import com.javi.uned.pfgcomposer.exceptions.MusescoreException;
 import com.javi.uned.pfgcomposer.exceptions.SpecsConsumerException;
@@ -49,7 +48,7 @@ public class RetryPDFConsumer {
             kafkaTemplate.send(TOPIC_COMPOSER_EXECUTION, key, e.getMessage());
         } finally { // Clean up
             try {
-                if (xmlFile != null && xmlFile.exists()) Files.delete(xmlFile.toPath());
+                if (xmlFile.exists()) Files.delete(xmlFile.toPath());
                 if (pdfFile != null && pdfFile.exists()) Files.delete(pdfFile.toPath());
             } catch (IOException ioe) {
                 logger.warn("No se ha podido borrar un archivo temporal", ioe);

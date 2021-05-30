@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.javi.uned</groupId>
 	<artifactId>pfg-composer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>pfg-composer</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -19,6 +19,7 @@
 		<sonar.projectKey>javierolmo_pfg-composer</sonar.projectKey>
 		<sonar.organization>javierolmo</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.source>11</maven.compiler.source>
 	</properties>
