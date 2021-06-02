@@ -1,14 +1,13 @@
-package com.javi.uned.pfgcomposer.consumers;
+package com.javi.uned.pfgcomposer.kafka.consumers;
 
 import com.javi.uned.pfg.ScoreBuilder;
 import com.javi.uned.pfg.exceptions.ExportException;
 import com.javi.uned.pfg.io.Export;
 import com.javi.uned.pfg.model.ScoreComposite;
 import com.javi.uned.pfg.model.Specs;
-import com.javi.uned.pfgcomposer.exceptions.BackendException;
 import com.javi.uned.pfgcomposer.exceptions.MusescoreException;
 import com.javi.uned.pfgcomposer.exceptions.SpecsConsumerException;
-import com.javi.uned.pfgcomposer.services.BackendService;
+import com.javi.uned.pfgcomposer.kafka.producers.FileProducer;
 import com.javi.uned.pfgcomposer.services.MusescoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,18 +23,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 @Service
-public class SpecsConsumer {
+public class RetryXMLConsumer {
 
-    private final Logger logger = LoggerFactory.getLogger(SpecsConsumer.class);
-    private static final String TOPIC_COMPOSER_EXECUTION = "melodia.composer.specs";
+    private final Logger logger = LoggerFactory.getLogger(RetryXMLConsumer.class);
+    private static final String TOPIC_COMPOSER_EXECUTION = "melodia.composer.retryxml";
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
-    private BackendService backendService;
+    private FileProducer fileProducer;
     @Autowired
     private MusescoreService musescoreService;
 
-    @KafkaListener(topics = "melodia.backend.specs", groupId = "0", containerFactory = "specsKafkaListenerFactory")
+    @KafkaListener(topics = "melodia.backend.retryxml", groupId = "0", containerFactory = "specsKafkaListenerFactory")
     public void consume(Specs specs, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key) {
         File xmlFile = null;
         File pdfFile = null;
@@ -69,9 +68,9 @@ public class SpecsConsumer {
             kafkaTemplate.send(TOPIC_COMPOSER_EXECUTION, key, "Generando fichero .musicxml");
             File xmlFile = new File(key+".musicxml");
             Export.toXML(scoreComposite, xmlFile);
-            backendService.persistXMLSheet(xmlFile, key);
+            fileProducer.sendXML(key, xmlFile);
             return xmlFile;
-        } catch (BackendException | ExportException e) {
+        } catch (IOException | ExportException e) {
             throw new SpecsConsumerException("SpecsConsumer.generarXML: Error al generar XML", e);
         }
     }
@@ -81,16 +80,13 @@ public class SpecsConsumer {
             if(!xmlFile.exists()) throw new SpecsConsumerException("SpecsConsumer.generarPDF: No se ha podido crear el PDF. No existe el archivo " + xmlFile.getAbsolutePath());
             kafkaTemplate.send(TOPIC_COMPOSER_EXECUTION, key, "Generando fichero .pdf");
             File pdfFile = musescoreService.convertXMLToPDF(xmlFile, key + ".pdf");
-            backendService.persistPDFSheet(pdfFile, key);
+            fileProducer.sendPDF(key, pdfFile);
             return pdfFile;
         } catch (MusescoreException e) {
             throw new SpecsConsumerException("SpecsConsumer.generarPDF: error al generar PDF", e);
-        } catch (BackendException e) {
+        } catch (IOException e) {
             throw new SpecsConsumerException("SpecsConsumer.generarPDF: error al guardar PDF", e);
         }
     }
-
-
-
 
 }

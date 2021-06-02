@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.javi.uned</groupId>
 	<artifactId>pfg-composer</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>pfg-composer</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -19,7 +19,7 @@
 		<sonar.projectKey>javierolmo_pfg-composer</sonar.projectKey>
 		<sonar.organization>javierolmo</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-
+		<jaxb.api.version>2.3.1</jaxb.api.version>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.source>11</maven.compiler.source>
 	</properties>
@@ -92,6 +92,22 @@
 			<artifactId>pfg-core</artifactId>
 			<version>1.0.6</version>
 		</dependency>
+
+		<!-- JAXB Api -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<!-- JAXB Runtime -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
 
 	</dependencies>
 
